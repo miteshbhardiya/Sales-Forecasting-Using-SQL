@@ -111,6 +111,9 @@ Given the absence of a Visualization tool in MySql, I chose MS Excel for Visuali
 
 ## Visualization
  Here is the Visualization after Forecasting the Sales Data:
+ ![My Image](https://github.com/miteshbhardiya/Sales-Forecasting-Using-SQL/blob/main/graph1.png?raw=true)
+
+
 
     
     
