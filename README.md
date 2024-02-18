@@ -15,9 +15,6 @@ Utilizes SQL queries for seamless data manipulation, analysis, and model develop
 Given the absence of a Visualization tool in MySql, I chose MS Excel for Visualization.
 
 ## SQL Query
-
-
-'''sql
     
     CREATE TABLE SALES_DATA.BRANCH_TABLE AS SELECT YEAR_ID, MONTH_ID, SUM(SALES) AS MONTHLY_SALES FROM
     sales_data.salesdataset
