@@ -15,6 +15,7 @@ Utilizes SQL queries for seamless data manipulation, analysis, and model develop
 Given the absence of a Visualization tool in MySql, I chose MS Excel for Visualization.
 
 ## SQL Query
+### 1. Main Query:
     
     CREATE TABLE SALES_DATA.BRANCH_TABLE AS SELECT YEAR_ID, MONTH_ID, SUM(SALES) AS MONTHLY_SALES FROM
     sales_data.salesdataset
@@ -105,6 +106,50 @@ Given the absence of a Visualization tool in MySql, I chose MS Excel for Visuali
         *
     FROM
         sales_data.branch_table;
+
+## 2. Linear Regression Using Stored Procedure:
+
+    CREATE PROCEDURE `LINEAR_REGRESSION`(IN tableName varchar(255), IN xColumn varchar(255), IN yColumn varchar(255))
+    BEGIN
+    
+        DECLARE n INT;
+        DECLARE sum_x DOUBLE;
+        DECLARE sum_y DOUBLE;
+        DECLARE sum_xy DOUBLE;
+        DECLARE sum_x_squared DOUBLE;
+        DECLARE sum_y_squared DOUBLE;
+        DECLARE slope DOUBLE;
+        DECLARE intercept DOUBLE;
+        DECLARE r_squared DOUBLE;
+        
+        SET @sql = CONCAT('SELECT COUNT(*) INTO @n FROM ', tableName);
+        PREPARE stmt FROM @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+    
+        SET @sql = CONCAT('SELECT SUM(', xColumn, '), SUM(', yColumn, '), SUM(', xColumn, ' * ', yColumn, '), SUM(', xColumn, ' * ', xColumn, '), SUM(', yColumn, ' * ', yColumn, ') INTO @sum_x, @sum_y, @sum_xy, @sum_x_squared, @sum_y_squared FROM ', tableName);
+        PREPARE stmt FROM @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+    
+        SET n = @n;
+        SET sum_x = @sum_x;
+        SET sum_y = @sum_y;
+        SET sum_xy = @sum_xy;
+        SET sum_x_squared = @sum_x_squared;
+        SET sum_y_squared = @sum_y_squared;
+    
+        SET slope = ((n * sum_xy) - (sum_x * sum_y)) / ((n * sum_x_squared) - (sum_x * sum_x));
+        SET intercept = (sum_y - slope * sum_x) / n;
+    
+        SET r_squared = POWER((n * sum_xy - sum_x * sum_y) / SQRT((n * sum_x_squared - sum_x * sum_x) * (n * sum_y_squared - sum_y * sum_y)), 2);
+    	
+        SET @slope := slope;
+        SET @intercept := intercept;
+        SET @r_squared := r_squared;
+        
+        select slope, intercept, r_squared;
+    END
 
 ## Visualization
  Here is the Visualization after Forecasting the Sales Data:
